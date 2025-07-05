@@ -1,0 +1,142 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    color: #222;
+}
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 40px 24px 40px;
+}
+header {
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+}
+.profile-image img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e0e0e0;
+    margin-right: 32px;
+}
+.profile-info h1 {
+    margin: 0 0 8px 0;
+    font-size: 2.2em;
+    color: #2d3a4b;
+}
+.profile-info h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.2em;
+    color: #6c7a89;
+    font-weight: 400;
+}
+.contact-info p {
+    margin: 4px 0;
+    color: #4a4a4a;
+    font-size: 1em;
+}
+main {
+    margin-top: 24px;
+}
+.section {
+    margin-bottom: 36px;
+}
+.section h2 {
+    color: #2d3a4b;
+    font-size: 1.3em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.timeline {
+    border-left: 3px solid #e0e0e0;
+    margin-left: 10px;
+    padding-left: 18px;
+}
+.timeline-item {
+    margin-bottom: 18px;
+}
+.timeline-date {
+    font-size: 0.95em;
+    color: #6c7a89;
+    margin-bottom: 2px;
+}
+.timeline-content h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1em;
+    color: #3a4a5b;
+}
+.skills-grid {
+    display: flex;
+    gap: 32px;
+}
+.skill-category h3 {
+    margin-bottom: 8px;
+    color: #3a4a5b;
+}
+.certifications-list, .projects-list, .internships-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.certification-item, .project-item, .internship-item {
+    background: #f8fafb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.projects-list a {
+    color: #0077b6;
+    text-decoration: none;
+    font-weight: 500;
+}
+.projects-list a:hover {
+    text-decoration: underline;
+}
+.section ul {
+    padding-left: 20px;
+}
+footer {
+    margin-top: 32px;
+    text-align: center;
+}
+.social-links {
+    margin-top: 12px;
+}
+.social-links a {
+    color: #222;
+    margin: 0 10px;
+    font-size: 1.5em;
+    transition: color 0.2s;
+}
+.social-links a:hover {
+    color: #0077b6;
+}
+@media (max-width: 700px) {
+    .container {
+        padding: 16px 6px;
+    }
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .profile-image img {
+        margin-bottom: 16px;
+        margin-right: 0;
+    }
+    .skills-grid {
+        flex-direction: column;
+        gap: 16px;
+    }
+} 
