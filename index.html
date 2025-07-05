@@ -3,154 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal CV</title>
+    <title>Your Name | Portfolio</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="profile-header">
-                <div class="profile-image">
-                    <!-- Add your profile image here -->
+    <header class="hero">
+        <div class="container hero-content">
+            <div>
+                <h1>Hi, I'm <span class="highlight">Your Name</span></h1>
+                <h2>Professional Title / Student</h2>
+                <a href="#about" class="cta-btn">Know more</a>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="about" class="about-section">
+            <div class="container about-wrapper">
+                <div class="about-img">
                     <img src="profile-placeholder.jpg" alt="Profile Picture">
                 </div>
-                <div class="profile-info">
-                    <h1>Your Name</h1>
-                    <h2>Professional Title</h2>
-                    <div class="contact-info">
-                        <p><i class="fas fa-envelope"></i> email@example.com</p>
-                        <p><i class="fas fa-phone"></i> +1 234 567 890</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Your Location</p>
+                <div class="about-info">
+                    <h2>About Me</h2>
+                    <p>Brief professional summary, research interests, and career objectives. Add hobbies or goals if desired.</p>
+                    <ul class="about-list">
+                        <li><strong>Email:</strong> email@example.com</li>
+                        <li><strong>Location:</strong> Your Location</li>
+                    </ul>
+                    <a href="#contact" class="cta-btn cta-btn--resume">Contact Me</a>
+                </div>
+            </div>
+        </section>
+        <section id="projects" class="projects-section">
+            <div class="container">
+                <h2>Projects</h2>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <h3>Project Title</h3>
+                        <p>Short description of the project, technologies used, and your role.</p>
+                        <div class="project-links">
+                            <a href="#" target="_blank">Live</a>
+                            <a href="#" target="_blank">Source</a>
+                        </div>
+                    </div>
+                    <!-- Add more project cards as needed -->
+                </div>
+            </div>
+        </section>
+        <section id="experience" class="experience-section">
+            <div class="container">
+                <h2>Experience & Education</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-date">2022 - Present</span>
+                        <div>
+                            <strong>Job Title / Internship</strong> at Company Name<br>
+                            <span>Key responsibility or achievement</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-date">2018 - 2022</span>
+                        <div>
+                            <strong>Bachelor's Degree</strong> at University Name<br>
+                            <span>Major in Your Field</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
-
-        <main>
-            <section class="section" id="about">
-                <h2><i class="fas fa-user"></i> About Me</h2>
-                <p>A brief professional summary highlighting your key strengths and career objectives.</p>
-            </section>
-
-            <section class="section" id="education">
-                <h2><i class="fas fa-graduation-cap"></i> Education</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">2018 - 2022</div>
-                        <div class="timeline-content">
-                            <h3>Bachelor's Degree</h3>
-                            <p>University Name</p>
-                            <p>Major in Your Field</p>
-                        </div>
-                    </div>
-                    <!-- Add more education items as needed -->
-                </div>
-            </section>
-
-            <section class="section" id="experience">
-                <h2><i class="fas fa-briefcase"></i> Work Experience</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">2022 - Present</div>
-                        <div class="timeline-content">
-                            <h3>Job Title</h3>
-                            <p>Company Name</p>
-                            <ul>
-                                <li>Key responsibility or achievement</li>
-                                <li>Another significant accomplishment</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- Add more experience items as needed -->
-                </div>
-            </section>
-
-            <section class="section" id="skills">
-                <h2><i class="fas fa-tools"></i> Skills</h2>
+        </section>
+        <section id="skills" class="skills-section">
+            <div class="container">
+                <h2>Skills & Courses</h2>
                 <div class="skills-grid">
-                    <div class="skill-category">
+                    <div>
                         <h3>Technical Skills</h3>
                         <ul>
                             <li>Skill 1</li>
                             <li>Skill 2</li>
-                            <li>Skill 3</li>
                         </ul>
                     </div>
-                    <div class="skill-category">
-                        <h3>Soft Skills</h3>
+                    <div>
+                        <h3>Courses</h3>
                         <ul>
-                            <li>Skill 1</li>
-                            <li>Skill 2</li>
-                            <li>Skill 3</li>
+                            <li>Course 1</li>
+                            <li>Course 2</li>
                         </ul>
                     </div>
                 </div>
-            </section>
-
-            <section class="section" id="certifications">
-                <h2><i class="fas fa-certificate"></i> Certifications</h2>
-                <div class="certifications-list">
-                    <div class="certification-item">
-                        <h3>Certification Name</h3>
-                        <p>Issuing Organization</p>
-                        <p>Date Obtained</p>
-                    </div>
-                    <!-- Add more certifications as needed -->
-                </div>
-            </section>
-
-            <section class="section" id="projects">
-                <h2><i class="fas fa-project-diagram"></i> Projects</h2>
-                <div class="projects-list">
-                    <div class="project-item">
-                        <h3>Project Title</h3>
-                        <p>Short project description, technologies used, and your role.</p>
-                        <a href="#" target="_blank">View on GitHub</a>
-                    </div>
-                    <!-- Add more project items as needed -->
-                </div>
-            </section>
-
-            <section class="section" id="internships">
-                <h2><i class="fas fa-user-tie"></i> Internships</h2>
-                <div class="internships-list">
-                    <div class="internship-item">
-                        <h3>Internship Title</h3>
-                        <p>Company Name</p>
-                        <p>Duration</p>
-                        <ul>
-                            <li>Key responsibility or achievement</li>
-                        </ul>
-                    </div>
-                    <!-- Add more internship items as needed -->
-                </div>
-            </section>
-
-            <section class="section" id="research">
-                <h2><i class="fas fa-flask"></i> Research Interests</h2>
-                <ul>
-                    <li>Research Area 1</li>
-                    <li>Research Area 2</li>
+            </div>
+        </section>
+        <section id="certifications" class="certifications-section">
+            <div class="container">
+                <h2>Certifications</h2>
+                <ul class="cert-list">
+                    <li>Certification Name - Issuing Organization (Date)</li>
                 </ul>
-            </section>
-
-            <section class="section" id="courses">
-                <h2><i class="fas fa-book"></i> Studied Courses</h2>
-                <ul>
-                    <li>Course 1</li>
-                    <li>Course 2</li>
-                </ul>
-            </section>
-        </main>
-
-        <footer>
+            </div>
+        </section>
+        <section id="contact" class="contact-section">
+            <div class="container contact-wrapper">
+                <h2>Contact</h2>
+                <p>Interested in collaborating or have questions? Feel free to reach out!</p>
+                <a href="mailto:email@example.com" class="cta-btn">Email Me</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container footer-content">
             <div class="social-links">
                 <a href="https://github.com/your-github-username" target="_blank"><i class="fab fa-github"></i></a>
                 <a href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
                 <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
             </div>
-        </footer>
-    </div>
+            <p>&copy; 2024 Your Name. Inspired by Simplefolio.</p>
+        </div>
+    </footer>
 </body>
 </html> 
+
