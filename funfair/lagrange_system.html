@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>太阳-地球系统与拉格朗日点</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05070d;
+      --panel: rgba(12, 18, 31, 0.78);
+      --panel-border: rgba(151, 177, 226, 0.22);
+      --text: #f3f7ff;
+      --muted: #a9b7d0;
+      --orbit: rgba(137, 183, 255, 0.24);
+      --sun: #ffd36b;
+      --earth: #67b8ff;
+      --moon: #d8e2f3;
+      --accent: #80ffdb;
+      --lpoint: #ff9f7d;
+      --trail: #9bffb8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 24px 12px;
+      background: linear-gradient(180deg, rgba(5, 7, 13, 0.94), rgba(5, 7, 13, 0));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 38px);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      white-space: nowrap;
+    }
+
+    .controls label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      width: 150px;
+      accent-color: var(--accent);
+    }
+
+    button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    main {
+      position: relative;
+      min-height: 0;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .legend {
+      position: absolute;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      width: min(360px, calc(100vw - 44px));
+      padding: 14px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+    }
+
+    .legend h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .swatch {
+      width: 11px;
+      height: 11px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .sun-dot { background: var(--sun); color: var(--sun); }
+    .earth-dot { background: var(--earth); color: var(--earth); }
+    .lagrange-dot { background: var(--lpoint); color: var(--lpoint); }
+    .trail-dot { background: var(--trail); color: var(--trail); }
+
+    .note {
+      margin-top: 12px;
+      padding-top: 11px;
+      border-top: 1px solid var(--panel-border);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        grid-template-rows: auto 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 16px 8px;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      input[type="range"] {
+        width: min(42vw, 170px);
+      }
+
+      .legend {
+        right: 12px;
+        bottom: 12px;
+        padding: 12px;
+      }
+
+      .legend-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>太阳-地球系统与 5 个拉格朗日点</h1>
+      <div class="subtitle">动态展示地球绕太阳运行、L1-L5 的相对位置，以及一颗卫星从地球附近发射并沿转移轨迹进入 L2 附近驻留的过程。</div>
+    </div>
+    <div class="controls" aria-label="动画控制">
+      <button id="toggle" title="暂停或继续动画" aria-label="暂停或继续动画">Ⅱ</button>
+      <label for="speed">速度</label>
+      <input id="speed" type="range" min="0.25" max="2.6" step="0.05" value="1">
+    </div>
+  </header>
+
+  <main>
+    <canvas id="scene" aria-label="太阳、地球、拉格朗日点和卫星转移轨迹动画"></canvas>
+    <section class="legend" aria-label="图例">
+      <h2>图例</h2>
+      <div class="legend-grid">
+        <div class="item"><span class="swatch sun-dot"></span><span>太阳</span></div>
+        <div class="item"><span class="swatch earth-dot"></span><span>地球与月球</span></div>
+        <div class="item"><span class="swatch lagrange-dot"></span><span>L1-L5 拉格朗日点</span></div>
+        <div class="item"><span class="swatch trail-dot"></span><span>卫星发射与 L2 驻留轨迹</span></div>
+      </div>
+      <div class="note">位置为科普比例示意：L1/L2 位于日地连线附近，L3 在太阳另一侧，L4/L5 与地球形成约 60° 的等边三角形。</div>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d");
+    const speedInput = document.getElementById("speed");
+    const toggle = document.getElementById("toggle");
+
+    let running = true;
+    let time = 0;
+    let last = performance.now();
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    function resize() {
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    toggle.addEventListener("click", () => {
+      running = !running;
+      toggle.textContent = running ? "Ⅱ" : "▶";
+    });
+
+    function glowCircle(x, y, r, fill, glow, layers = 3) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = layers; i > 0; i--) {
+        ctx.beginPath();
+        ctx.fillStyle = glow;
+        ctx.globalAlpha = 0.08 + i * 0.035;
+        ctx.arc(x, y, r + i * r * 0.75, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.fillStyle = fill;
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function lineLabel(text, x, y, align = "center", color = "#f3f7ff") {
+      ctx.save();
+      ctx.font = "600 13px Microsoft YaHei, Segoe UI, sans-serif";
+      ctx.textAlign = align;
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+      ctx.shadowBlur = 7;
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawStars(t) {
+      ctx.save();
+      ctx.fillStyle = "#05070d";
+      ctx.fillRect(0, 0, width, height);
+      const count = Math.floor((width * height) / 5600);
+      for (let i = 0; i < count; i++) {
+        const x = (Math.sin(i * 127.1) * 0.5 + 0.5) * width;
+        const y = (Math.sin(i * 311.7) * 0.5 + 0.5) * height;
+        const pulse = 0.55 + 0.45 * Math.sin(t * 0.7 + i);
+        ctx.globalAlpha = 0.22 + pulse * 0.5;
+        ctx.fillStyle = i % 9 === 0 ? "#ffe8a8" : "#dce9ff";
+        ctx.fillRect(x, y, i % 11 === 0 ? 1.8 : 1, i % 11 === 0 ? 1.8 : 1);
+      }
+      ctx.restore();
+    }
+
+    function rotate(point, angle) {
+      const c = Math.cos(angle);
+      const s = Math.sin(angle);
+      return {
+        x: point.x * c - point.y * s,
+        y: point.x * s + point.y * c
+      };
+    }
+
+    function bezier(p0, p1, p2, p3, u) {
+      const v = 1 - u;
+      return {
+        x: v ** 3 * p0.x + 3 * v ** 2 * u * p1.x + 3 * v * u ** 2 * p2.x + u ** 3 * p3.x,
+        y: v ** 3 * p0.y + 3 * v ** 2 * u * p1.y + 3 * v * u ** 2 * p2.y + u ** 3 * p3.y
+      };
+    }
+
+    function drawOrbit(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(137, 183, 255, 0.24)";
+      ctx.lineWidth = 1.3;
+      ctx.setLineDash([6, 10]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawLPoint(name, point, offsetX, offsetY) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "#ff9f7d";
+      ctx.shadowColor = "#ff9f7d";
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      lineLabel(name, point.x + offsetX, point.y + offsetY, "center", "#ffd2c4");
+    }
+
+    function drawArrowPath(points, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 9;
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.stroke();
+      const end = points[points.length - 1];
+      const prev = points[points.length - 6] || points[points.length - 2];
+      const a = Math.atan2(end.y - prev.y, end.x - prev.x);
+      ctx.beginPath();
+      ctx.moveTo(end.x, end.y);
+      ctx.lineTo(end.x - 11 * Math.cos(a - 0.45), end.y - 11 * Math.sin(a - 0.45));
+      ctx.lineTo(end.x - 11 * Math.cos(a + 0.45), end.y - 11 * Math.sin(a + 0.45));
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawScene(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (running) time += dt * Number(speedInput.value);
+
+      drawStars(time);
+
+      const compact = width < 760 || height < 560;
+      const cx = compact ? width * 0.45 : width * 0.43;
+      const cy = height * 0.5;
+      const orbitR = Math.max(150, Math.min(width, height) * (compact ? 0.32 : 0.36));
+      const angle = time * 0.42 - 0.5;
+      const sun = { x: cx, y: cy };
+      const earth = {
+        x: cx + Math.cos(angle) * orbitR,
+        y: cy + Math.sin(angle) * orbitR
+      };
+      const dir = { x: Math.cos(angle), y: Math.sin(angle) };
+      const tangent = { x: -Math.sin(angle), y: Math.cos(angle) };
+      const lOffset = orbitR * 0.105;
+
+      const points = {
+        L1: { x: earth.x - dir.x * lOffset, y: earth.y - dir.y * lOffset },
+        L2: { x: earth.x + dir.x * lOffset, y: earth.y + dir.y * lOffset },
+        L3: { x: cx - dir.x * orbitR * 1.02, y: cy - dir.y * orbitR * 1.02 },
+        L4: { x: cx + Math.cos(angle + Math.PI / 3) * orbitR, y: cy + Math.sin(angle + Math.PI / 3) * orbitR },
+        L5: { x: cx + Math.cos(angle - Math.PI / 3) * orbitR, y: cy + Math.sin(angle - Math.PI / 3) * orbitR }
+      };
+
+      drawOrbit(cx, cy, orbitR);
+
+      ctx.save();
+      ctx.strokeStyle = "rgba(128, 255, 219, 0.22)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 8]);
+      ctx.beginPath();
+      ctx.moveTo(sun.x, sun.y);
+      ctx.lineTo(points.L2.x + dir.x * 18, points.L2.y + dir.y * 18);
+      ctx.stroke();
+      ctx.restore();
+
+      glowCircle(sun.x, sun.y, compact ? 20 : 28, "#ffd36b", "rgba(255, 194, 76, 0.55)", 5);
+      lineLabel("太阳", sun.x, sun.y + (compact ? 36 : 48), "center", "#ffe7a6");
+
+      ctx.save();
+      const sunGradient = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, orbitR * 1.15);
+      sunGradient.addColorStop(0, "rgba(255, 196, 71, 0.08)");
+      sunGradient.addColorStop(0.28, "rgba(255, 196, 71, 0.025)");
+      sunGradient.addColorStop(1, "rgba(255, 196, 71, 0)");
+      ctx.fillStyle = sunGradient;
+      ctx.beginPath();
+      ctx.arc(sun.x, sun.y, orbitR * 1.15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      const earthR = compact ? 10 : 13;
+      glowCircle(earth.x, earth.y, earthR, "#67b8ff", "rgba(103, 184, 255, 0.45)", 3);
+      ctx.save();
+      ctx.strokeStyle = "rgba(216, 226, 243, 0.34)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(earth.x, earth.y, earthR * 2.3, 0, Math.PI * 2);
+      ctx.stroke();
+      const moonAngle = time * 2.4;
+      glowCircle(
+        earth.x + Math.cos(moonAngle) * earthR * 2.3,
+        earth.y + Math.sin(moonAngle) * earthR * 2.3,
+        2.8,
+        "#d8e2f3",
+        "rgba(216, 226, 243, 0.2)",
+        1
+      );
+      ctx.restore();
+      lineLabel("地球", earth.x + tangent.x * 24, earth.y + tangent.y * 24, "center", "#b9ddff");
+
+      drawLPoint("L1", points.L1, -tangent.x * 16 - dir.x * 9, -tangent.y * 16 - dir.y * 9);
+      drawLPoint("L2", points.L2, tangent.x * 20 + dir.x * 13, tangent.y * 20 + dir.y * 13);
+      drawLPoint("L3", points.L3, -tangent.x * 20 - dir.x * 12, -tangent.y * 20 - dir.y * 12);
+      drawLPoint("L4", points.L4, tangent.x * 18, tangent.y * 18);
+      drawLPoint("L5", points.L5, -tangent.x * 18, -tangent.y * 18);
+
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 159, 125, 0.18)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(points.L4.x, points.L4.y);
+      ctx.lineTo(sun.x, sun.y);
+      ctx.lineTo(points.L5.x, points.L5.y);
+      ctx.moveTo(points.L4.x, points.L4.y);
+      ctx.lineTo(earth.x, earth.y);
+      ctx.lineTo(points.L5.x, points.L5.y);
+      ctx.stroke();
+      ctx.restore();
+
+      const localStart = { x: earthR * 2.7, y: -earthR * 1.3 };
+      const launch = { x: earth.x + dir.x * localStart.x + tangent.x * localStart.y, y: earth.y + dir.y * localStart.x + tangent.y * localStart.y };
+      const p0 = launch;
+      const p1 = { x: earth.x + dir.x * lOffset * 0.32 + tangent.x * -46, y: earth.y + dir.y * lOffset * 0.32 + tangent.y * -46 };
+      const p2 = { x: earth.x + dir.x * lOffset * 0.86 + tangent.x * 38, y: earth.y + dir.y * lOffset * 0.86 + tangent.y * 38 };
+      const p3 = { x: points.L2.x, y: points.L2.y };
+      const trail = [];
+      for (let i = 0; i <= 72; i++) {
+        trail.push(bezier(p0, p1, p2, p3, i / 72));
+      }
+      drawArrowPath(trail, "rgba(155, 255, 184, 0.78)");
+
+      for (let i = 0; i < 9; i++) {
+        const phase = (time * 0.16 + i / 9) % 1;
+        const p = bezier(p0, p1, p2, p3, phase);
+        ctx.save();
+        ctx.globalAlpha = 0.25 + phase * 0.75;
+        glowCircle(p.x, p.y, 2.6 + phase * 1.4, "#9bffb8", "rgba(155, 255, 184, 0.4)", 1);
+        ctx.restore();
+      }
+
+      const halo = 10 + Math.sin(time * 4) * 2;
+      ctx.save();
+      ctx.strokeStyle = "rgba(155, 255, 184, 0.78)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      ctx.arc(points.L2.x, points.L2.y, halo, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      lineLabel("卫星最终驻留在 L2 附近", points.L2.x, points.L2.y + 34, "center", "#c9ffd8");
+
+      requestAnimationFrame(drawScene);
+    }
+
+    requestAnimationFrame(drawScene);
+  </script>
+</body>
+</html>
